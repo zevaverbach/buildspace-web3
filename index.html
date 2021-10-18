@@ -34,6 +34,14 @@
         <meta property="twitter:image"
               content="https://s3.amazonaws.com/cdn.buildspace.so/courses/ethereum-smart-contracts/metadata.png">
         <style>
+
+            #confirm {
+                color: red; 
+                display: none; 
+                text-align: center;
+                margin-top: 1em;
+            }
+
             .mainContainer {
                 display: flex;
                 justify-content: center;
@@ -48,6 +56,19 @@
                 max-width: 600px;
             }
 
+            form {
+                margin: 0 auto;
+                padding: 2em 0;
+            }
+
+            textarea {
+                margin: 0 3em;
+                resize: none;
+                font-size: 1em;
+                border: none;
+                outline: none;
+            }
+
             .header {
                 text-align: center;
                 font-size: 32px;
@@ -60,34 +81,89 @@
                 margin-top: 16px;
             }
 
-            .waveButton {
+            .whistleButton {
                 cursor: pointer;
-                margin-top: 16px;
+                text-align: center;
+                margin: 0 auto;
                 padding: 8px;
+                width: 200px;
                 border: 0;
-                border-radius: 5px;
-
+                background-color: yellow;
             }
 
-	    body {
-	      margin: 0;
-	      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-		'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-		sans-serif;
-	      -webkit-font-smoothing: antialiased;
-	      -moz-osx-font-smoothing: grayscale;
-	    }
+            body {
+                margin: 0;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+                'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+                sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            }
 
-	    code {
-	      font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-		monospace;
-	    }
+            code {
+                font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+                monospace;
+            }
         </style>
 
     </head>
 
     <body>
         <noscript>You need to enable JavaScript to run this app.</noscript>
-        <script src="js/scripts.js"></script>
+
+
+        <div class="mainContainer">
+
+            <div class="dataContainer">
+                <div class="header">
+                    👋 Hey there!
+                </div>
+
+                <div class="bio">
+                    Hey, I'm Zev and this is a place to put sensitive whistleblower disclosures (not really! it's a proof of concept) into the ethereum blockchain.
+                </div>
+
+                <form action="javascript:;" onsubmit="whistle()" id="whistleForm">
+                    <label for=disclosure>
+                        Sensitive Disclosure
+                    </label>
+                </form>
+
+                <textarea autofocus rows="5" cols="30" name=disclosure></textarea>
+
+                <button type=submit form="whistleForm" value="Disclose" class="whistleButton">
+                    Disclose
+                </button>
+                <div id=confirm>Disclosure sent!</div>
+            </div>
+        </div>
+        <script>
+            const box = document.getElementsByName("disclosure")[0]
+
+            const whistle = () => {
+                const disclosure = box.value
+                console.log(disclosure)
+                box.value = ""
+                showConfirm()
+            }
+
+            const confirm = document.getElementById("confirm")
+
+            const showConfirm = () => {
+                confirm.style.display = "block"
+                console.log('displaying confirm')
+                setTimeout(() => {
+                    confirm.style.display = "none"
+                    console.log('hiding confirm')
+                }, 5000)
+            }
+
+            document.addEventListener('keydown', (event) => {
+                if(event.ctrlKey && event.key == "Enter" || event.metaKey && event.key == "Enter") {
+                    whistle()
+                    box.blur()
+            }
+});
+        </script>
     </body>
 </html>
