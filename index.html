@@ -13,7 +13,7 @@
         <meta property="og:title" content="Whistlebox">
         <meta property="og:type" content="website">
         <meta property="og:url" content="https://web3.averba.ch">
-        <meta property="og:description" content="A simple HTML5 Template for new projects.">
+        <meta property="og:description" content="Put your sensitive disclosures here (don't really, it's a proof of concept).">
         <meta property="og:image" content="image.png">
 
         <link rel="icon" href="/favicon.ico">
@@ -45,6 +45,7 @@
             .mainContainer {
                 display: flex;
                 justify-content: center;
+                padding: 2em 0;
                 width: 100%;
                 margin-top: 64px;
             }
@@ -58,15 +59,16 @@
 
             form {
                 margin: 0 auto;
-                padding: 2em 0;
+                padding: 1em 0;
             }
 
             textarea {
-                margin: 0 3em;
+                margin: 1em 3em;
                 resize: none;
                 font-size: 1em;
-                border: none;
+                border: solid 2px pink;
                 outline: none;
+                padding: 1em;
             }
 
             .header {
@@ -132,7 +134,7 @@
                 <textarea autofocus rows="5" cols="30" name=disclosure></textarea>
 
                 <button type=submit form="whistleForm" value="Disclose" class="whistleButton">
-                    Disclose
+                    <b>Disclose</b> (⌘/ctrl-enter)
                 </button>
                 <div id=confirm>Disclosure sent!</div>
             </div>
@@ -142,7 +144,6 @@
 
             const whistle = () => {
                 const disclosure = box.value
-                console.log(disclosure)
                 box.value = ""
                 showConfirm()
             }
@@ -151,11 +152,7 @@
 
             const showConfirm = () => {
                 confirm.style.display = "block"
-                console.log('displaying confirm')
-                setTimeout(() => {
-                    confirm.style.display = "none"
-                    console.log('hiding confirm')
-                }, 5000)
+                setTimeout(() => confirm.style.display = "none", 5000)
             }
 
             document.addEventListener('keydown', (event) => {
