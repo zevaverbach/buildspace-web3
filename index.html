@@ -110,7 +110,7 @@
 
     </head>
 
-    <body>
+    <body onload="onLoad()">
         <noscript>You need to enable JavaScript to run this app.</noscript>
 
 
@@ -141,6 +141,19 @@
         </div>
         <script>
             const box = document.getElementsByName("disclosure")[0]
+
+            const onLoad = () => {
+                checkIfWalletIsConnected()
+            }
+
+            const checkIfWalletIsConnected = () => {
+                if (!window.ethereum) {
+                    console.log("Make sure you have metamask!");
+                  return;
+                } else {
+                    console.log("We have the ethereum object", window.ethereum);
+                }
+            }
 
             const whistle = () => {
                 const disclosure = box.value
