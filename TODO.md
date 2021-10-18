@@ -1,0 +1,1 @@
+- [ ] fix flashing (disappear, reappear) that happens after clicking "connect wallet"

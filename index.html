@@ -42,6 +42,10 @@
                 margin-top: 1em;
             }
 
+            #connectWallet {
+                display: none;
+            }
+
             .mainContainer {
                 display: flex;
                 justify-content: center;
@@ -107,6 +111,8 @@
                 monospace;
             }
         </style>
+        <script type="text/javascript" src="ethers.js"></script>
+
 
     </head>
 
@@ -125,6 +131,8 @@
                     Hey, I'm Zev and this is a place to put sensitive whistleblower disclosures (not really! it's a proof of concept) into the ethereum blockchain.
                 </div>
 
+                <button onclick="connectWallet()" id="connectWallet">Connect Wallet</button>
+
                 <form action="javascript:;" onsubmit="whistle()" id="whistleForm">
                     <label for=disclosure>
                         Sensitive Disclosure
@@ -140,25 +148,78 @@
             </div>
         </div>
         <script>
+            let currentAccount
+            const contractAddress = "0x085c977Cb9b8B7afc11FB7ae66B472fD58362B31"
             const box = document.getElementsByName("disclosure")[0]
+            let contractABI
 
-            const onLoad = () => {
-                checkIfWalletIsConnected()
+            const getContractABI = async () => {
+                const abi = await fetch('./whistleBox.json')
+                abiJson = await abi.json()
+                return abiJson.abi
             }
 
-            const checkIfWalletIsConnected = () => {
+            getContractABI().then(result => contractABI = result)
+            console.log(contractABI)
+
+            const onLoad = async () => {
+                await walletIsConnected()
+                setInterval(() => walletIsConnected(), 1000)
+            }
+
+            const getEthObj = async () => {
                 if (!window.ethereum) {
-                    console.log("Make sure you have metamask!");
-                  return;
+                    throw "Make sure you have metamask!"
                 } else {
-                    console.log("We have the ethereum object", window.ethereum);
+                    console.log("We have the ethereum object", window.ethereum)
+                }
+                return window.ethereum
+            }
+
+            const walletIsConnected = async () => {
+                try {
+                    const ethereum = await getEthObj()
+                    const accounts = await ethereum.request({ method: 'eth_accounts' })
+          
+                    if (accounts.length !== 0) {
+                        currentAccount = accounts[0]
+                        console.log("found an authorized account:", currentAccount)
+                        hideElement("connectWallet")
+                    } else {
+                        console.log("no authorized account found")
+                        showElement("connectWallet")
+                    }
+
+                } catch (error) {
+                    console.log(error)
                 }
             }
 
-            const whistle = () => {
-                const disclosure = box.value
-                box.value = ""
-                showConfirm()
+            const connectWallet = async () => {
+                try {
+                    const ethereum = await getEthObj()
+                    currentAccount = await ethereum.request({ method: "eth_requestAccounts" })[0]
+                } catch (error) {
+                    console.log(error)
+                    showElement("connectWallet")
+                }
+                hideElement("connectWallet")
+            }
+
+            const whistle = async () => {
+                try {
+                    const ethereum = await getEthObj()
+                    //const disclosure = box.value
+                    // box.value = ""
+                    const provider = new ethers.providers.Web3Provider(ethereum)
+                    const signer = provider.getSigner()
+                    const contract = new ethers.Contract(contractAddress, contractABI, signer)
+                    let tips = await contract.getAllTips()
+                    console.log('okay, got tips')
+                    console.log(tips)
+                } catch (error) {
+                    console.log(error)
+                }
             }
 
             const confirm = document.getElementById("confirm")
@@ -168,12 +229,15 @@
                 setTimeout(() => confirm.style.display = "none", 5000)
             }
 
+            const showElement = id => document.getElementById(id).style.display = "block"
+            const hideElement = id => document.getElementById(id).style.display = "none"
+
             document.addEventListener('keydown', (event) => {
                 if(event.ctrlKey && event.key == "Enter" || event.metaKey && event.key == "Enter") {
                     whistle()
                     box.blur()
             }
-});
+})
         </script>
     </body>
 </html>
